@@ -4,7 +4,13 @@ MAINTAINER wahahaXDD
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /requirements.txt
+RUN echo 
+RUN apk add --update --no-cache postgresql-client || \
+  (sed -i -e 's/dl-cdn/dl-4/g' /etc/apk/repositories && apk add --no-cache postgresql-client)
+RUN apk add --update --no-cache --virtual .tmp-build-deps \
+  gcc libc-dev linux-headers postgresql-dev
 RUN pip install -r /requirements.txt
+RUN apk del .tmp-build-deps
 
 RUN mkdir /app
 WORKDIR /app
